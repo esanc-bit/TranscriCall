@@ -57,19 +57,58 @@ uvicorn backend:app --host 0.0.0.0 --port 8000 --reload
 
 Abrir `http://localhost:8000/` para el dashboard.
 
-### Cliente de captura
+### Cliente de captura (integración NUXIBA/CCC.uno)
 
-Listar dispositivos de entrada:
-```python
-python -c "import sounddevice as sd;print(sd.query_devices())"
-```
+1) Identifique el dispositivo de entrada correcto. En Linux con PulseAudio, el audio del sistema suele exponerse como un dispositivo de entrada tipo "Monitor of ...".
 
-Grabar y enviar fragmentos de 5s desde un dispositivo específico (micrófono o monitor):
 ```bash
-python capture/capture_client.py --backend http://localhost:8000 --agent-id AGENTE01 --chunk-seconds 5 --device 1
+python -c "import sounddevice as sd; print(sd.query_devices())"
 ```
 
-Consejo: Para audio del sistema (Linux), use un dispositivo de entrada tipo "Monitor of ...".
+2) Ejemplos de uso:
+- Micrófono del agente (mono 16k):
+```bash
+python capture/capture_client.py --backend http://localhost:8000 --agent-id AGENTE01 --device-name "mic" --samplerate 16000 --channels 1
+```
+- Salida del softphone (monitor PulseAudio), downmix estéreo a mono:
+```bash
+python capture/capture_client.py --backend http://localhost:8000 --agent-id AGENTE01 --device-name "monitor of" --prefer-monitor --samplerate 16000 --channels 2 --downmix
+```
+
+3) Sugerencias por plataforma:
+- NUXIBA/CCC.uno con softphone en Linux: habilite el "Monitor of ..." del sink de salida del softphone y use `--prefer-monitor`.
+- Windows: configure VB-Audio Virtual Cable y elija ese input con `--device-name "CABLE Output"` (requiere adaptación a WASAPI; el cliente actual usa PortAudio/sounddevice).
+
+4) Ejecución como servicio por agente (systemd):
+
+```ini
+# /etc/systemd/system/transcricall-agent@.service
+[Unit]
+Description=TranscriCall Capture (%i)
+After=network.target
+
+[Service]
+User=agent
+Group=agent
+WorkingDirectory=/workspace/transcricall
+Environment="PATH=/workspace/transcricall/.venv/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
+ExecStart=/workspace/transcricall/.venv/bin/python /workspace/transcricall/capture/capture_client.py \
+  --backend http://backend.internal:8000 \
+  --agent-id %i \
+  --device-name "monitor of" --prefer-monitor \
+  --samplerate 16000 --channels 2 --downmix \
+  --chunk-seconds 5
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable --now transcricall-agent@AGENTE01.service
+```
 
 ### Variables de entorno útiles
 - `TRANSCRIBER_ENGINE=vosk` (por defecto)
