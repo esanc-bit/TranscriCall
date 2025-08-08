@@ -1,0 +1,18 @@
+body { font-family: system-ui, Arial, sans-serif; margin: 0; background: #0b1220; color: #e8eefc; }
+header { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: #111a2c; border-bottom: 1px solid #1d2742; }
+h1 { font-size: 20px; margin: 0; }
+nav button { margin-left: 8px; padding: 8px 12px; background: #1b2744; color: #c9d6ff; border: 1px solid #2b3b66; border-radius: 6px; cursor: pointer; }
+nav button.active { background: #2a3a64; }
+main { padding: 16px; }
+.toolbar { display: flex; gap: 8px; margin-bottom: 12px; }
+.toolbar input, .toolbar select { background: #0f1830; border: 1px solid #24345c; color: #dfe8ff; padding: 8px; border-radius: 6px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 12px; }
+.card { background: #0f1830; border: 1px solid #24345c; border-radius: 10px; padding: 12px; }
+.card h3 { margin: 0 0 6px 0; font-size: 14px; color: #9fb4ff; }
+.card .text { font-size: 14px; line-height: 1.4; white-space: pre-wrap; }
+.card.hot { border-color: #ff6b6b; box-shadow: 0 0 0 1px #ff6b6b inset; }
+.tab { display: none; }
+.tab.active { display: block; }
+.panel { background: #0f1830; border: 1px solid #24345c; border-radius: 10px; padding: 12px; margin-bottom: 16px; }
+#agentRanking { width: 100%; border-collapse: collapse; }
+#agentRanking th, #agentRanking td { padding: 6px 8px; border-bottom: 1px solid #24345c; }

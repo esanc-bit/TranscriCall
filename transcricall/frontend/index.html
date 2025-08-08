@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TranscriCall</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+  <header>
+    <h1>TranscriCall</h1>
+    <nav>
+      <button id="tab-live" class="active">En vivo</button>
+      <button id="tab-analytics">Análisis</button>
+    </nav>
+  </header>
+
+  <main>
+    <section id="live" class="tab active">
+      <div class="toolbar">
+        <input id="search" type="text" placeholder="Buscar palabra clave" />
+        <select id="agentFilter">
+          <option value="all">Todos los agentes</option>
+        </select>
+      </div>
+      <div id="cards" class="cards"></div>
+    </section>
+
+    <section id="analytics" class="tab">
+      <div class="panel">
+        <canvas id="byHour"></canvas>
+      </div>
+      <div class="panel">
+        <canvas id="hotByHour"></canvas>
+      </div>
+      <div class="panel">
+        <canvas id="durationHist"></canvas>
+      </div>
+      <div class="panel">
+        <table id="agentRanking">
+          <thead><tr><th>Agente</th><th>Llamadas</th><th>Calientes</th><th>Score</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/static/app.js"></script>
+</body>
+</html>
