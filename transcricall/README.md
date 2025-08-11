@@ -40,9 +40,14 @@ flowchart LR
 ### Instalación (local)
 
 ```bash
-cd /workspace/transcricall
+cd transcricall
 python -m venv .venv
+# Linux / macOS
 source .venv/bin/activate
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+# Windows CMD
+.\.venv\Scripts\activate.bat
 pip install -r requirements.txt
 # (Opcional) descarga automática de modelo pequeño en español
 export ALLOW_AUTO_DOWNLOAD=1

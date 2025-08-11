@@ -6,6 +6,12 @@ import zipfile
 from typing import Tuple, Dict
 
 
+# Base directory of the project (one level up from this file).  Using a
+# relative path avoids hard-coding ``/workspace/transcricall`` which breaks when
+# the repository directory has a different name or casing.
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
+
 class Transcriber:
     def __init__(self, engine: str = "vosk", language: str = "es", model_path: str = ""):
         self.engine = engine
@@ -91,7 +97,14 @@ def ensure_default_model(engine: str, language: str, model_path: str = ""):
 
 
 def default_model_path(engine: str, language: str) -> str:
-    base = "/workspace/transcricall/models"
+    """Return the default directory where models are stored.
+
+    The previous implementation hardcoded ``/workspace/transcricall`` which
+    fails if the repository lives elsewhere or uses a different name.  By
+    basing the path on ``BASE_DIR`` we make it portable.
+    """
+
+    base = os.path.join(BASE_DIR, "models")
     if engine == "vosk":
         sub = {
             "es": "vosk-model-small-es",

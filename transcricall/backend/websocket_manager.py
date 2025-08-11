@@ -15,9 +15,14 @@ class ConnectionManager:
 
     async def disconnect(self, websocket: WebSocket):
         async with self._lock:
-            for clients in self._agent_to_clients.values():
+            empty_keys = []
+            for agent, clients in self._agent_to_clients.items():
                 if websocket in clients:
                     clients.remove(websocket)
+                if agent != "all" and not clients:
+                    empty_keys.append(agent)
+            for agent in empty_keys:
+                del self._agent_to_clients[agent]
 
     async def subscribe(self, websocket: WebSocket, agent_id: str):
         async with self._lock:
@@ -27,6 +32,8 @@ class ConnectionManager:
         async with self._lock:
             if agent_id in self._agent_to_clients and websocket in self._agent_to_clients[agent_id]:
                 self._agent_to_clients[agent_id].remove(websocket)
+                if agent_id != "all" and not self._agent_to_clients[agent_id]:
+                    del self._agent_to_clients[agent_id]
 
     async def broadcast(self, agent_id: str, message):
         async with self._lock:
@@ -42,5 +49,7 @@ class ConnectionManager:
         if to_remove:
             async with self._lock:
                 for ws in to_remove:
-                    for clients in self._agent_to_clients.values():
+                    for agent, clients in list(self._agent_to_clients.items()):
                         clients.discard(ws)
+                        if agent != "all" and not clients:
+                            del self._agent_to_clients[agent]
